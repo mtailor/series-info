@@ -3,7 +3,7 @@
 	"engine": "node >= 0.10.26",
 	"dependencies": {
 		"cheerio": "0.13.1",
-		"request": "2.34.0",
-		"q": "1.0.1"
+		"q": "1.0.1",
+		"q-io": "1.11.0"
 	}
 }
