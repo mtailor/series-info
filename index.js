@@ -34,31 +34,3 @@ var server = new qHttp.Server(function(request) {
 		console.log(e);
 	});
 
-/*
-
-var server = http.createServer(function(req, res) {
-	console.log('[REQUEST] ' + req.url);
-	if (req.url != '/') {
-		res.writeHead(404);
-		res.end('Invalid url');
-	} else {
-		seriesService.doProcess(function(err, result) {
-			if (err) {
-				console.log(err);
-				res.writeHead(500);
-				res.end();
-			} else {
-				res.writeHead(200, {
-					'Content-Type': 'application/json; charset=utf-8'
-				});
-				res.write(JSON.stringify(result, null, 2));
-				res.end();
-			}
-		});
-	}
-
-}).listen(serverPort, serverUrl);
-
-console.log('Server running at http://' + serverUrl + ':' + serverPort);
-
-*/
