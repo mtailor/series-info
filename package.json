@@ -2,6 +2,7 @@
 	"name": "series",
 	"engine": "node >= 0.10.26",
 	"dependencies": {
+		"mongoose": "3.8.8",
 		"cheerio": "0.13.1",
 		"q": "1.0.1",
 		"q-io": "1.11.0"
