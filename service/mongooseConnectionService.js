@@ -1,12 +1,14 @@
 var mongoose = require("mongoose");
-var config = require("./config");
 var q = require('q');
+var config = require("../common/config");
 
 
 // Returns a promise for undefined
-module.exports = function(){
+exports.connect = function() {
+	console.log('Launching the connection to the database');
 	var deferred = q.defer();
 	mongoose.connection.once('open', function() {
+		console.log('Successfully connected to the database');
 		deferred.resolve();
 	});
 	mongoose.connection.on('error', function() {
@@ -17,4 +19,9 @@ module.exports = function(){
 }
 
 
-
+exports.disconnect = function() {
+	console.log('Disconnecting from the database');
+	mongoose.disconnect(function() {
+		console.log('Successfully disconnected from the database');
+	});
+}

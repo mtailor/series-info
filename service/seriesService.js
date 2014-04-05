@@ -4,7 +4,7 @@ var cheerio = require('cheerio');
 var config = require('./config');
 var SerieModel = require('./SerieModel')
 
-
+//TODO migrer dans les nouveaux services
 
 // returns an array of episode titles
 	function getEpisodesTitles(id, numSeason) {
