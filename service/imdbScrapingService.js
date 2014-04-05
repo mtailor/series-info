@@ -1,9 +1,18 @@
+var moment = require('moment');
 var q = require('q');
 var qHttp = require('q-io/http');
 var cheerio = require('cheerio');
-var moment = require('moment');
 var config = require('../common/config');
 var dao = require('../dao/seriesDao.js');
+
+function translateDate(str){
+	var m = moment(str);
+	if(! m.isValid()){
+		throw new Error('"' + str + '" is not a parsable date')
+	}
+	return m;
+}
+
 
 // Returns an array of episode, where each episodes has
 // - title
@@ -19,10 +28,15 @@ function getEpisodes(id, numSeason) {
 			var $ = cheerio.load(response.toString());
 			var episodes = [];
 			$('.eplist .info').each(function() {
-				episodes.push({
-					title : $(this).find('strong a').eq(0).text(),
-					airDate : moment($(this).find('.airDate').eq(0).text().trim())
-				});
+				var airDateStr = $(this).find('.airDate, .airdate').eq(0).text().trim();
+				//empty air date means unknown => we don't want to store it
+				if(airDateStr !== ''){
+					episodes.push({
+						title : $(this).find('strong a').eq(0).text(),
+						airDate : translateDate(airDateStr)
+					});
+				}
+				
 			});
 			return episodes;
 		});

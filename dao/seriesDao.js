@@ -40,12 +40,15 @@ exports.addSerie = function(serie) {
 	return doQuery(
 		'INSERT INTO serie ' +
 		'(serie_id, title, moviemeter_rank) ' +
-		'VALUES ' +
-		'($1, $2, $3)',
+		'SELECT $1, $2, $3' +
+		'WHERE NOT EXISTS (' + 
+        '    SELECT * FROM serie WHERE serie_id = $4' +
+		')',
 		[
 			serie.id,
 			serie.title,
-			0
+			0,
+			serie.id
 		]
 	);
 }
@@ -59,9 +62,13 @@ exports.addSeason = function(serieId, numSeason, episodes) {
 		// insert the season
 		'INSERT INTO season ' +
 		'(serie_id, season_num) ' +
-		'VALUES ' +
-		'($1, $2)',
+		'SELECT $1, $2 ' +
+		'WHERE NOT EXISTS (' + 
+		'    SELECT * FROM season WHERE serie_id = $3 AND season_num = $4' +
+		')',
 		[
+			serieId,
+			numSeason,
 			serieId,
 			numSeason
 		]
@@ -72,14 +79,19 @@ exports.addSeason = function(serieId, numSeason, episodes) {
 			return doQuery(
 				'INSERT INTO episode ' +
 				'(serie_id, season_num, episode_num, title, air_date) ' +
-				'VALUES ' +
-				'($1, $2, $3, $4, $5)',
+				'SELECT $1, $2, $3, $4, $5 ' +
+				'WHERE NOT EXISTS (' + 
+				'    SELECT * FROM episode WHERE serie_id = $6 AND season_num = $7 AND episode_num = $8' +
+				')',
 				[
 					serieId,
 					numSeason,
 					num,
 					episode.title,
-					episode.airDate.format('YYYY-MM-DD')
+					episode.airDate.format('YYYY-MM-DD'),
+					serieId,
+					numSeason,
+					num
 				]
 			);
 		}));
