@@ -7,9 +7,12 @@
 	<title>Series</title>
 </head>
 
-<body>
+<body ng-controller="SeriesController">
 	<h3>Series</h3>
-	<table ng-controller="SeriesController">
+	<p ng-show="loading">
+		Loading...
+	</p>
+	<table ng-show="!loading">
 		<tr>
 			<th>Rank</th>
 			<th>Id</th>
