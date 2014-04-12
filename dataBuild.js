@@ -1,7 +1,10 @@
-var imdbScrapingService = require('./service/imdbScrapingService');
+var service = require('./service/scrapingAndStoringService');
+var dao = require('./dao/seriesDao');
 
-console.log('Launching the process of scraping IMDB and storing its datas');
-imdbScrapingService.scrapAndStore().done(function(){
+dao.deleteAll().then(function(){
+	console.log('Launching the process of scraping IMDB and storing its datas');
+	return service.scrapAndStore();
+}).done(function(){
 	console.log('Done.');
 	process.exit();
 });

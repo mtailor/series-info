@@ -86,26 +86,36 @@ function fetchSeasonsAndStoreThem(id) {
 // returns an array of objects where each has :
 // - id
 // - title
+// - rank
 function getBaseSeries() {
-	var url = config.IMDB_SERIES_URL;
-	console.log('Interrogating ' + url);
-	return qHttp
-		.read(url)
-		.then(function(response) {
-			var $ = cheerio.load(response.toString());
-			var titleLinks = $('.results tr.detailed .title > a');
-			var series = [];
-			titleLinks.each(function() {
-				series.push({
-					id: $(this).attr('href').replace('/title/', '').replace('/', ''),
-					title: $(this).text()
+	return q.all(config.IMDB_SERIES_URLS.map(function (url){
+		console.log('Interrogating ' + url);
+		return qHttp
+			.read(url)
+			.then(function(response) {
+				var $ = cheerio.load(response.toString());
+				var rows = $('.results tr.detailed');
+				var series = [];
+				rows.each(function(){
+					series.push({
+						id : $(this).find('.title > a').attr('href').replace('/title/', '').replace('/', ''),
+						title : $(this).find('.title > a').text(),
+						rank : $(this).find('td.number').text().replace('.', '')
+					});
 				});
+				return series;
 			});
-			return series;
-		});
+
+	}))
+	.then(function(arrayOfArraysOfSeries){
+		// need to flatten it into a simple array
+		// see http://stackoverflow.com/questions/10865025/merge-flatten-an-array-of-arrays-in-javascript
+		return [].concat.apply([], arrayOfArraysOfSeries);
+	});
 }
 
 exports.scrapAndStore = function() {
+	console.log('Launching the process of scraping IMDB and storing its datas');
 	return getBaseSeries().then(function(baseSeries) {
 		return q.all(
 			baseSeries.map(function(baseSerie) {

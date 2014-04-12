@@ -31,12 +31,18 @@ function doQuery(sql, params) {
 }
 
 
+exports.deleteAll = function(){
+	console.log('Deleting all series, seasons and episodes');
+	return doQuery('TRUNCATE serie CASCADE', []);
+}
+
+
 // serie must have :
 // id
 // title
-// TODO rajouter rank
+// rank
 exports.addSerie = function(serie) {
-	console.log('Storing the serie ' + serie.id + ' (' + serie.title +')');
+	console.log('Storing the serie ' + serie.id + ' (' + serie.rank + '. ' + serie.title +')');
 	return doQuery(
 		'INSERT INTO serie ' +
 		'(serie_id, title, moviemeter_rank) ' +
@@ -47,13 +53,13 @@ exports.addSerie = function(serie) {
 		[
 			serie.id,
 			serie.title,
-			0,
+			serie.rank,
 			serie.id
 		]
 	);
 }
 
-// episodes must be an array w²here each object has 
+// episodes must be an array where each object has 
 // - title
 // - airDate (a 'moment')
 exports.addSeason = function(serieId, numSeason, episodes) {
