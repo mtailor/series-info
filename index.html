@@ -1,1 +1,28 @@
-<h1>sdfsdf</h1>
+<!DOCTYPE html>
+<html ng-app="mainModule">
+<head>
+	<link rel="icon" href="favicon.png" />
+	<script src="angular.js"></script>
+	<script src="app.js"></script>
+	<title>Series</title>
+</head>
+
+<body>
+	<h3>Series</h3>
+	<table ng-controller="SeriesController">
+		<tr>
+			<th>Rank</th>
+			<th>Id</th>
+			<th>Title</th>
+			<th>Number of Seasons</th>
+		</tr>
+		<tr ng-repeat="serie in series">
+			<td>{{serie.rank}}</td>
+			<td>{{serie.id}}</td>
+			<td>{{serie.title}}</td>
+			<td>{{serie.nbSeasons}}</td>
+		</tr>
+	</table>
+</body>
+
+</html>

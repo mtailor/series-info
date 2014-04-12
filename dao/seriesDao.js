@@ -39,7 +39,16 @@ exports.getSeries = function(){
 		'GROUP BY a.serie_id, title, moviemeter_rank ' +
 		'ORDER BY moviemeter_rank',
 		[]
-	);
+	).then(function(rows){
+		return rows.map(function(row){
+			return {
+				id : row.serie_id,
+				title : row.title,
+				rank : row.moviemeter_rank,
+				nbSeasons : row.nb_seasons
+			};
+		});
+	});
 }
 
 exports.deleteAll = function(){
