@@ -22,7 +22,7 @@ function doQuery(sql, params) {
 				if (err) {
 					deferred.reject(err);
 				} else {
-					deferred.resolve(result);
+					deferred.resolve(result.rows);
 				}
 			})
 ;		}
@@ -30,6 +30,17 @@ function doQuery(sql, params) {
 	return deferred.promise;
 }
 
+exports.getSeries = function(){
+	return doQuery(
+		'SELECT a.serie_id, title, moviemeter_rank, count(*) as nb_seasons ' + 
+		'FROM serie a ' +
+		'LEFT JOIN season b ' +
+		'ON a.serie_id = b.serie_id ' +
+		'GROUP BY a.serie_id, title, moviemeter_rank ' +
+		'ORDER BY moviemeter_rank',
+		[]
+	);
+}
 
 exports.deleteAll = function(){
 	console.log('Deleting all series, seasons and episodes');
