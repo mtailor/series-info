@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html ng-app="mainModule">
 <head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="favicon.png" />
+	<link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script src="jquery-2.1.0.min.js"></script>
+	<script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
 	<script src="angular.js"></script>
 	<script src="app.js"></script>
 	<title>Series</title>
 </head>
 
 <body ng-controller="SeriesController">
-	<h3>Series</h3>
-	<p ng-show="loading">
-		Loading...
-	</p>
-	<table ng-show="!loading">
-		<tr>
-			<th>Rank</th>
-			<th>Id</th>
-			<th>Title</th>
-			<th>Number of Seasons</th>
-		</tr>
-		<tr ng-repeat="serie in series">
-			<td>{{serie.rank}}</td>
-			<td>{{serie.id}}</td>
-			<td>{{serie.title}}</td>
-			<td>{{serie.nbSeasons}}</td>
-		</tr>
-	</table>
+	<div class="container">
+  		<h1>Series</h1>		
+		<p ng-if="loading">
+			Loading...
+		</p>
+		<table class="table table-condensed table-striped " ng-if="!loading">
+			<tr ng-repeat="serie in series" >
+				<td  class="text-left">
+					{{serie.title}}
+					<em><small>
+						<ng-pluralize count="serie.nbSeasons" when="{'one': '1 season', 'other': '{} seasons'}"></ng-pluralize>
+					</small></em>
+				</td>
+			</tr>
+		</table>
+	</div>
 </body>
 
 </html>
