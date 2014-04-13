@@ -46,7 +46,11 @@ function getEpisodes(id, numSeason) {
 function fetchSeasonAndStoreIt(id, numSeason){
 	return getEpisodes(id, numSeason)
 		.then(function(episodes){
-			return dao.addSeason(id, numSeason, episodes);
+			if(episodes.length > 0){
+				return dao.addSeason(id, numSeason, episodes);
+			} else {
+				return;
+			}
 		});
 }
 

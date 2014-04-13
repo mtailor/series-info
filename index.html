@@ -15,18 +15,17 @@
 
 <body ng-controller="SeriesController">
 	<div class="container">
-  		<h1>Series</h1>		
+		<h1>Series</h1>	
 		<p ng-if="loading">
 			Loading...
 		</p>
 		<table class="table table-condensed table-striped " ng-if="!loading">
 			<tr ng-repeat="serie in series" >
-				<td  class="text-left">
-					{{serie.title}}
-					<em><small>
-						<ng-pluralize count="serie.nbSeasons" when="{'one': '1 season', 'other': '{} seasons'}"></ng-pluralize>
-					</small></em>
+				<td class="text-left">
+					{{serie.title}}					
 				</td>
+				<td ng-repeat="season in serie.seasons track by $index">
+					<span ng-if="season" class="glyphicon glyphicon-ok"></span>
 			</tr>
 		</table>
 	</div>

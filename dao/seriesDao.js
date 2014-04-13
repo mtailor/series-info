@@ -30,6 +30,47 @@ function doQuery(sql, params) {
 	return deferred.promise;
 }
 
+function buildArrayOfEmptyObjects(length){
+	var a = [];
+	for(var i = 0; i < length; i++){
+		a.push({});
+	}
+	return a;
+}
+
+
+
+
+// Returns an array of seasons where each has 
+// - firstAirDate
+// - lastAirDate
+exports.getSeasons = function(serieId){
+	return doQuery(
+		'SELECT min(c.air_date) as first_air_date, max(c.air_date) as last_air_date ' + 
+		'FROM season b ' +
+		'LEFT JOIN episode c ' +
+		'ON b.serie_id = c.serie_id ' +
+		'AND b.season_num = c.season_num ' +
+		'WHERE b.serie_id = $1 ' +
+		'GROUP BY b.season_num ' +
+		'ORDER BY b.season_num',
+		[serieId]
+	).then(function(rows){
+		return rows.map(function(row){
+			return {
+				firstAirDate : row.first_air_date,
+				lastAirDate : row.last_air_date
+			};
+		});
+	});
+}
+
+
+// Returns an array of series where each has 
+// - id
+// - title
+// - rank
+// - seasons : an array of seasons, each season being an empty object
 exports.getSeries = function(){
 	return doQuery(
 		'SELECT a.serie_id, title, moviemeter_rank, count(*) as nb_seasons ' + 
@@ -45,7 +86,7 @@ exports.getSeries = function(){
 				id : row.serie_id,
 				title : row.title,
 				rank : row.moviemeter_rank,
-				nbSeasons : row.nb_seasons
+				seasons : buildArrayOfEmptyObjects(row.nb_seasons)
 			};
 		});
 	});

@@ -14,9 +14,18 @@ var indexApp = function(request){
 
 // Respond to ajax calls
 var ajaxApp = function(request){
-	if (request.path == '/getSeries') {
+	if (request.path == '/series') {
 		return dao
 			.getSeries()
+			.then(function(val) {
+				return qApps.ok(
+					JSON.stringify(val, null, 2),
+					'application/json; charset=utf-8'
+				);
+			});
+	} else if (request.path.match(new RegExp('^/seasons/.*$'))) {
+		return dao
+			.getSeasons(request.path.replace('/seasons/', ''))
 			.then(function(val) {
 				return qApps.ok(
 					JSON.stringify(val, null, 2),
@@ -33,9 +42,9 @@ var publicApp = qApps.FileTree('public');
 
 console.log('Launching the server');
 new qHttp.Server(qAppsRoute.FirstFound([
-		qApps.Log(qApps.Error(indexApp)),
-		qApps.Log(qApps.Error(ajaxApp)),
-		qApps.Error(publicApp)
+		qApps.Log(indexApp),
+		qApps.Log(ajaxApp),
+		publicApp
 	]))
 	.listen(config.SERVER_PORT)
 	.done(function() {
