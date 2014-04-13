@@ -14,9 +14,10 @@ var indexApp = function(request){
 
 // Respond to ajax calls
 var ajaxApp = function(request){
-	if (request.path == '/series') {
+	if (request.path.match(new RegExp('^/series/?.*$'))) {
+		var param = request.path.replace(new RegExp('/series/?'), '');
 		return dao
-			.getSeries()
+			.getSeries(param != '' ? param : undefined)
 			.then(function(val) {
 				return qApps.ok(
 					JSON.stringify(val, null, 2),

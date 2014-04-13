@@ -16,18 +16,20 @@
 <body ng-controller="SeriesController">
 	<div class="container">
 		<h1>Series</h1>	
+		<table class="table table-striped" ng-if="!loading">
+			<tr ng-repeat="serie in series">
+				<td>{{serie.title}}</td>
+				<td>
+							
+							<div ng-repeat="duration in serie.seasonsDurations track by $index" style="width:{{duration}}px;background:#fea;margin:5px;height:10px">
+								
+							</div>
+				</td>
+			</tr>			
+		</table>
 		<p ng-if="loading">
 			Loading...
 		</p>
-		<table class="table table-condensed table-striped " ng-if="!loading">
-			<tr ng-repeat="serie in series" >
-				<td class="text-left">
-					{{serie.title}}					
-				</td>
-				<td ng-repeat="season in serie.seasons track by $index">
-					<span ng-if="season" class="glyphicon glyphicon-ok"></span>
-			</tr>
-		</table>
 	</div>
 </body>
 

@@ -2,40 +2,41 @@ angular
 	.module('mainModule', [])
  	.controller('SeriesController', function ($scope, $http) {
 
+			var _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
- 			function computeMaxNumberOfSeasons(data){
- 				var max = 0;
- 				console.log(data);
- 				data.forEach(function(serie){
-					var nbSeasons = serie.seasons.length;
- 					if(nbSeasons > max){
- 						max = nbSeasons;
- 					}
+
+			function dateDiffInDays(a, b) {
+				// Discard the time and time-zone information.
+				a = new Date(a);
+				b = new Date(b);
+				var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+				var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+				return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+			}
+
+ 			function augmentSerieWithSeasons(serie){
+ 				$http.get('seasons/' + serie.id).success(function(seasons){
+ 					serie.seasonsDurations = seasons.map(function(season){
+ 						return dateDiffInDays(season.firstAirDate, season.lastAirDate);
+ 					});
  				});
- 				return max;
- 			};	
+ 			}
 
- 			function buildArrayOfTrueThenFalse(nbOfTrue, nbTotal){
- 				var a = [];
- 				for(var i = 0; i < nbTotal; i++){
- 					a.push(i < nbOfTrue);
- 				}
- 				return a;
- 			};
-
- 			function replaceSeasonsArrays(data, maxNbSeasons){
- 				data.forEach(function(serie){
-					var nbSeasons = serie.seasons.length;
-					serie.seasons = buildArrayOfTrueThenFalse(nbSeasons, maxNbSeasons);
+ 			function augmentSeriesWithSeasons(series){
+ 				series.forEach(function(serie){
+ 					augmentSerieWithSeasons(serie);
  				});
- 				return data;
- 			};
+ 			}
 
  			$scope.loading = true;
-			$http.get('series').success(function(data) {
-				$scope.series = replaceSeasonsArrays(data, computeMaxNumberOfSeasons(data));
+			$http.get('series').success(function(series) {
+				$scope.series = series;
 				$scope.loading = false;
+				augmentSeriesWithSeasons(series);
 			});
+
+
+
 		}
 	);
 

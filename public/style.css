@@ -1,13 +1,12 @@
 * {
 	color : rgb(131, 144, 151);
 }
+.progress * {
+	color : rgb(255, 255, 255);
+}
 h1 {
 	color : rgb(0, 0, 0);
 }
 small * {
-		color : rgb(95, 87, 60);
-
-}
-td.present {
-	background
+	color : rgb(95, 87, 60);
 }
