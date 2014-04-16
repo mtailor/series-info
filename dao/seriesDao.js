@@ -1,5 +1,6 @@
 var pg = require('pg.js');
 var q = require('q');
+var moment = require('moment');
 var config = require("../common/config");
 
 
@@ -29,6 +30,52 @@ function doQuery(sql, params) {
 	});
 	return deferred.promise;
 }
+
+function getValues(obj){
+	return Object.keys(obj).map(function(key){
+		return obj[key];
+	});
+}
+
+
+
+// Returns an array of series where each has
+// - id
+// - title
+// - rank
+// - episodesAirDates : an array for the airDates ('moments') of the episodes
+//                      within that year
+// The series without any episode within that year are excluded.
+exports.getEpisodesBySeriesForSomeYear = function(year){
+	return doQuery(
+		'SELECT a.serie_id, a.moviemeter_rank, a.title, c.air_date ' +
+		'FROM serie a ' +
+		'LEFT JOIN episode c ' +
+		'ON a.serie_id = c.serie_id ' +
+		'WHERE EXTRACT(YEAR FROM c.air_date) = $1 ' +
+		'ORDER BY moviemeter_rank, air_date',
+		[year]
+	).then(function(rows){
+		var series = {};
+		rows.forEach(function(row){
+			var id = row.serie_id;
+			// add that serie if it's its first row
+			if(! series[id]){
+				series[id] = {
+					id : id,
+					title : row.title,
+					rank : row.moviemeter_rank,
+					episodesAirDates : []
+				}
+			}
+			// add the episode
+			series[id].episodesAirDates.push(moment(row.air_date));
+		});
+		return getValues(series);
+	});
+}
+
+
 
 // Returns an array of seasons where each has 
 // - firstAirDate

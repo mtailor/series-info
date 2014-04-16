@@ -6,7 +6,7 @@
 	<link rel="icon" href="favicon.png" />
 	<link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="style.css" rel="stylesheet">
-	<script src="jquery-2.1.0.min.js"></script>
+	<script src="moment-with-langs.min.js"></script>
 	<script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
 	<script src="angular.js"></script>
 	<script src="app.js"></script>
@@ -15,18 +15,19 @@
 
 <body ng-controller="SeriesController">
 	<div class="container">
-		<h1>Series</h1>	
-		<table class="table table-striped" ng-if="!loading">
+		<h1>Series</h1>
+		<table class=".table table-striped" ng-if="!loading">
 			<tr ng-repeat="serie in series">
-				<td>{{serie.title}}</td>
 				<td>
-							
-							<div ng-repeat="duration in serie.seasonsDurations track by $index" style="width:{{duration}}px;background:#fea;margin:5px;height:10px">
-								
-							</div>
+					{{serie.title}}
 				</td>
-			</tr>			
+				<td ng-repeat="isAirDay in serie.days track by $index">
+					<span ng-if="isAirDay" class="present"></span>
+					<span ng-if="!isAirDay" class="absent"></span>
+				</td>
+			</tr>
 		</table>
+
 		<p ng-if="loading">
 			Loading...
 		</p>

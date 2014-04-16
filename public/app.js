@@ -2,41 +2,68 @@ angular
 	.module('mainModule', [])
  	.controller('SeriesController', function ($scope, $http) {
 
-			var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+ 			function asMoments(datesStrings){
+ 				return datesStrings.map(function(s){
+ 					return moment(s);
+ 				});
+ 			}
 
+ 			function firstDayOfYear(year){
+ 				return moment([year, 0, 1]);
+ 			}
 
-			function dateDiffInDays(a, b) {
-				// Discard the time and time-zone information.
-				a = new Date(a);
-				b = new Date(b);
-				var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-				var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-				return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+			function listDaysOfYear(year){
+				var days = [];
+				var d = firstDayOfYear(year);				
+				while(d.year() == year){
+					// push a copy
+					days.push(moment(d));
+					d.add('days', 1);
+				}
+				return days;				
 			}
 
- 			function augmentSerieWithSeasons(serie){
- 				$http.get('seasons/' + serie.id).success(function(seasons){
- 					serie.seasonsDurations = seasons.map(function(season){
- 						return dateDiffInDays(season.firstAirDate, season.lastAirDate);
- 					});
- 				});
- 			}
+			function containsDay(days, day){
+				cptContainsDay++;
+				return days.some(function(d){
+					//this version seems much faster than .same()
+					return d.date() == day.date() && d.month() == day.month() && d.year() == day.year();
+				});
+			}
 
- 			function augmentSeriesWithSeasons(series){
- 				series.forEach(function(serie){
- 					augmentSerieWithSeasons(serie);
- 				});
- 			}
+
+			var cptContainsDay = 0 
+			var cptGetAirDatesAsBoolean = 0
+
+			// for each day of the year, the returned array
+			// will contain true/false depending
+			// on wether it's present or not in the airDates
+			function getAirDatesAsBoolean(daysOfYear, airDates){
+				cptGetAirDatesAsBoolean++;
+				return daysOfYear.map(function (day){
+					return containsDay(airDates, day);
+				});
+			}
+
+			var year = 2013;
 
  			$scope.loading = true;
-			$http.get('series').success(function(series) {
-				$scope.series = series;
+			$scope.series = []; 
+			$http.get('year/' + year).success(function(series) {
+
+				//series = [series[0], series[1], series[2]];
+				var yearDays = listDaysOfYear(year);
+
+				var res = series.map(function(serie){
+					return {
+						id : serie.id,
+						title : serie.title,
+						days : getAirDatesAsBoolean(yearDays, asMoments(serie.episodesAirDates))
+					};
+				});
+				$scope.series = res;
 				$scope.loading = false;
-				augmentSeriesWithSeasons(series);
 			});
-
-
-
 		}
 	);
 

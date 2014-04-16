@@ -33,6 +33,15 @@ var ajaxApp = function(request){
 					'application/json; charset=utf-8'
 				);
 			});
+	} else if (request.path.match(new RegExp('^/year/.*$'))) {
+		return dao
+			.getEpisodesBySeriesForSomeYear(request.path.replace('/year/', ''))
+			.then(function(val) {
+				return qApps.ok(
+					JSON.stringify(val, null, 2),
+					'application/json; charset=utf-8'
+				);
+			});
 	}
 	return qApps.notFound(request);
 };

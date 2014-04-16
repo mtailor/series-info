@@ -10,3 +10,14 @@ h1 {
 small * {
 	color : rgb(95, 87, 60);
 }
+.present, .absent {
+	width : 2px;
+	height : 5px;
+	display:block;
+}
+.present {
+	background : black;
+}
+.absent {
+	background : lightgray;
+}
