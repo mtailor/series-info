@@ -6,6 +6,7 @@
 	<link rel="icon" href="favicon.png" />
 	<link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="style.css" rel="stylesheet">
+	<script src="jquery-2.1.0.min.js"></script>
 	<script src="moment-with-langs.min.js"></script>
 	<script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
 	<script src="angular.js"></script>
@@ -16,18 +17,34 @@
 <body ng-controller="SeriesController">
 	<div class="container">
 		<h1>Series</h1>
-		<table class=".table table-striped" ng-if="!loading">
+		<table class="table table-striped" ng-if="!loading">
 			<tr ng-repeat="serie in series">
+				<td>{{serie.title}}</td>
 				<td>
-					{{serie.title}}
-				</td>
-				<td ng-repeat="isAirDay in serie.days track by $index">
-					<span ng-if="isAirDay" class="present"></span>
-					<span ng-if="!isAirDay" class="absent"></span>
+					<svg height="10" width="380">
+						<g transform="translate(10)">
+							<line
+								x1="0"
+								y1="5"
+								ng-attr-x2="{{dayInTargetYear.isLeapYear() ? 366 : 365}}"
+								y2="5"
+								stroke="black"
+								stroke-width="1"
+							/>
+					    	<circle
+					    		ng-repeat="episode in serie.episodesAirDates"
+					    		ng-attr-cx="{{episode.dayOfYear()}}"
+					    		cy="5"
+					    		r="3"
+					    		stroke="black"
+					    		fill="{{! episode.isBefore() ? 'white' : 'black'}}"
+					    		stroke-width="2"
+				    		/>
+					    </g>						
+					</svg>
 				</td>
 			</tr>
 		</table>
-
 		<p ng-if="loading">
 			Loading...
 		</p>

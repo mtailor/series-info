@@ -45,23 +45,15 @@ angular
 				});
 			}
 
-			var year = 2013;
-
+			var YEAR = 2014;
  			$scope.loading = true;
+			$scope.dayInTargetYear = moment(YEAR + '-01-01');
 			$scope.series = []; 
-			$http.get('year/' + year).success(function(series) {
-
-				//series = [series[0], series[1], series[2]];
-				var yearDays = listDaysOfYear(year);
-
-				var res = series.map(function(serie){
-					return {
-						id : serie.id,
-						title : serie.title,
-						days : getAirDatesAsBoolean(yearDays, asMoments(serie.episodesAirDates))
-					};
+			$http.get('year/' + YEAR).success(function(series) {
+				series.forEach(function(serie){
+					serie.episodesAirDates = asMoments(serie.episodesAirDates);
 				});
-				$scope.series = res;
+				$scope.series = series;
 				$scope.loading = false;
 			});
 		}
