@@ -24,38 +24,47 @@ angular
 			}
 
 			function containsDay(days, day){
-				cptContainsDay++;
 				return days.some(function(d){
 					//this version seems much faster than .same()
 					return d.date() == day.date() && d.month() == day.month() && d.year() == day.year();
 				});
 			}
 
-
-			var cptContainsDay = 0 
-			var cptGetAirDatesAsBoolean = 0
-
 			// for each day of the year, the returned array
 			// will contain true/false depending
 			// on wether it's present or not in the airDates
 			function getAirDatesAsBoolean(daysOfYear, airDates){
-				cptGetAirDatesAsBoolean++;
 				return daysOfYear.map(function (day){
 					return containsDay(airDates, day);
 				});
 			}
 
-			var YEAR = 2014;
- 			$scope.loading = true;
-			$scope.dayInTargetYear = moment(YEAR + '-01-01');
-			$scope.series = []; 
-			$http.get('year/' + YEAR).success(function(series) {
-				series.forEach(function(serie){
-					serie.episodesAirDates = asMoments(serie.episodesAirDates);
+			function reloadSeries(){
+				$scope.loading = true;
+				$http.get('year/' + $scope.year).success(function(series) {
+					series.forEach(function(serie){
+						serie.episodesAirDates = asMoments(serie.episodesAirDates);
+					});
+					$scope.series = series;
+					$scope.loading = false;
 				});
-				$scope.series = series;
-				$scope.loading = false;
-			});
+			}
+
+			$scope.isLeapYear = function(year){
+				return moment(year + '-01-01').isLeapYear();
+			};
+			$scope.incrementYear = function (){
+				$scope.year++;
+			};
+			$scope.decrementYear = function (){
+				$scope.year--;
+			};
+			$scope.year = 2014;
+ 			$scope.loading = true;
+			$scope.series = []; 
+			$scope.$watch('year', function(){
+				reloadSeries();
+			});			
 		}
 	);
 

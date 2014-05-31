@@ -15,9 +15,15 @@
 </head>
 
 <body ng-controller="SeriesController">
-	<div class="container">
-		<h1>Series</h1>
-		<table class="table table-striped" ng-if="!loading">
+	<div class="container-fluid">
+		<h1>Series
+			<small>
+				<a class="glyphicon glyphicon-chevron-left" ng-click="decrementYear()"></a>
+				{{year}}
+				<a class="glyphicon glyphicon-chevron-right" ng-click="incrementYear()"></a>
+			</small>
+		</h1>			
+		<table class="table table-striped">
 			<tr ng-repeat="serie in series">
 				<td>{{serie.title}}</td>
 				<td>
@@ -26,7 +32,7 @@
 							<line
 								x1="0"
 								y1="5"
-								ng-attr-x2="{{dayInTargetYear.isLeapYear() ? 366 : 365}}"
+								ng-attr-x2="{{isLeapYear(year) ? 366 : 365}}"
 								y2="5"
 								stroke="black"
 								stroke-width="1"
@@ -45,9 +51,9 @@
 				</td>
 			</tr>
 		</table>
-		<p ng-if="loading">
+		<!--<p ng-if="loading">
 			Loading...
-		</p>
+		</p>-->
 	</div>
 </body>
 
